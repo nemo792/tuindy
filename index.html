@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Туынды ойыны</title>
+  <style>
+    body {
+      background-color: #f0f0f5;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #game-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    .question {
+      font-size: 20px;
+      margin: 20px 0;
+    }
+    .options button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .options button.correct {
+      background-color: #28a745;
+    }
+    .options button.wrong {
+      background-color: #dc3545;
+    }
+    #next-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      display: none;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #score {
+      margin-top: 20px;
+      font-size: 18px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    <h1>Туынды ойыны</h1>
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <button id="next-btn">Келесі</button>
+    <div id="score"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "f(x) = x² функциясының туындысы қандай?", options: ["2x", "x", "x²", "2"], answer: "2x" },
+      { question: "f(x) = sin(x) функциясының туындысы қандай?", options: ["cos(x)", "-cos(x)", "sin(x)", "-sin(x)"], answer: "cos(x)" },
+      { question: "f(x) = eˣ функциясының туындысы қандай?", options: ["eˣ", "x", "xeˣ", "e"], answer: "eˣ" },
+      { question: "f(x) = ln(x) функциясының туындысы қандай?", options: ["1/x", "x", "ln(x)", "xln(x)"], answer: "1/x" },
+      { question: "f(x) = 3x³ функциясының туындысы қандай?", options: ["9x²", "3x²", "9x", "3x³"], answer: "9x²" },
+      { question: "f(x) = cos(x) функциясының туындысы қандай?", options: ["-sin(x)", "sin(x)", "-cos(x)", "cos(x)"], answer: "-sin(x)" },
+      { question: "f(x) = 5x⁴ функциясының туындысы қандай?", options: ["20x³", "5x³", "20x⁴", "x⁴"], answer: "20x³" },
+      { question: "f(x) = arctan(x) функциясының туындысы қандай?", options: ["1/(1+x²)", "1/(1-x²)", "arctan(x)", "1/x"], answer: "1/(1+x²)" },
+      { question: "f(x) = √x функциясының туындысы қандай?", options: ["1/(2√x)", "√x", "2√x", "1/x"], answer: "1/(2√x)" },
+      { question: "f(x) = 7x⁵ функциясының туындысы қандай?", options: ["35x⁴", "7x⁴", "35x⁵", "x⁵"], answer: "35x⁴" },
+      { question: "f(x) = tan(x) функциясының туындысы қандай?", options: ["sec²(x)", "cos²(x)", "sin²(x)", "tan²(x)"], answer: "sec²(x)" },
+      { question: "f(x) = 2x⁻¹ функциясының туындысы қандай?", options: ["-2x⁻²", "2x⁻²", "-x⁻²", "x⁻²"], answer: "-2x⁻²" },
+      { question: "f(x) = x³ + 2x функциясының туындысы қандай?", options: ["3x² + 2", "3x² + 2x", "x² + 2", "3x²"], answer: "3x² + 2" },
+      { question: "f(x) = eˣ + x функциясының туындысы қандай?", options: ["eˣ + 1", "eˣ", "x", "eˣ + x"], answer: "eˣ + 1" },
+      { question: "f(x) = ln(x) + x² функциясының туындысы қандай?", options: ["1/x + 2x", "ln(x) + 2x", "1/x + x", "2x"], answer: "1/x + 2x" },
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreEl = document.getElementById('score');
+
+    function showQuestion() {
+      questionEl.textContent = questions[currentIndex].question;
+      optionsEl.innerHTML = '';
+
+      questions[currentIndex].options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(btn, option);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(button, selected) {
+      const correct = questions[currentIndex].answer;
+      const buttons = document.querySelectorAll('.options button');
+
+      buttons.forEach(btn => {
+        if (btn.textContent === correct) btn.classList.add('correct');
+        else btn.classList.add('wrong');
+        btn.disabled = true;
+      });
+
+      if (selected === correct) score++;
+      nextBtn.style.display = 'inline-block';
+    }
+
+    nextBtn.onclick = () => {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion();
+        nextBtn.style.display = 'none';
+      } else {
+        showScore();
+      }
+    };
+
+    function showScore() {
+      questionEl.textContent = "Ойын аяқталды!";
+      optionsEl.innerHTML = '';
+      nextBtn.style.display = 'none';
+      scoreEl.textContent = Сіздің ұпайыңыз: ${score} / ${questions.length};
+      scoreEl.style.display = 'block';
+    }
+
+    showQuestion();
+  </script>
+
+</body>
+</html>
